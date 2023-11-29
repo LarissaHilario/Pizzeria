@@ -1,72 +1,62 @@
 package com.example.restaurantepizza.Threads;
+import com.example.restaurantepizza.HelloController;
 import com.example.restaurantepizza.Models.MonitorMesero;
 import com.example.restaurantepizza.Models.MonitorRecepcionista;
 import java.util.Random;
 
 public class HiloCliente extends Thread {
-    private static final Random random = new Random();
-    private final MonitorRecepcionista monitorRecepcionista;
-    private final MonitorMesero monitorMesero;
+    private static int contadorClientes = 0;
+    private MonitorRecepcionista monitorRecepcionista;
+    private MonitorMesero monitorMesero;
 
-    public HiloCliente(String nombre, MonitorRecepcionista recepcionista, MonitorMesero mesero) {
-        super(nombre);
-        this.monitorRecepcionista = recepcionista;
-        this.monitorMesero = mesero;
+    public HiloCliente(MonitorRecepcionista monitorRecepcionista, MonitorMesero monitorMesero) {
+        this.monitorRecepcionista = monitorRecepcionista;
+        this.monitorMesero = monitorMesero;
+        this.setName("Cliente-" + contadorClientes++);
     }
 
-    private void llegarAlRestaurante() {
-        System.out.println(getName() + " llega al restaurante.");
+
+    public void entrarRestaurante(){
+        System.out.println("Cliente " + getId() + " ha entrado al restaurante y su mesa.");
     }
 
-    private void entrarAlRestaurante() throws InterruptedException {
-        monitorRecepcionista.entrarRestaurante(this);
-        System.out.println(getName() + " entra al restaurante.");
+    public void pedirPizza() {
+        System.out.println("Cliente " + getId() + " ha pedido una pizza.");
     }
 
-    private void pedirPizza() throws InterruptedException {
-        int numeroOrden = monitorMesero.tomarOrden();
-        System.out.println(getName() + " pide una pizza: Orden #" + numeroOrden);
-        // Simula el tiempo que tarda en comer.
-        Thread.sleep(5000);
-        //System.out.println(getName() + " come la pizza: Orden #" + numeroOrden);
-        //monitorRecepcionista.salirRestaurante();
+    public void esperarPizza(){
+        System.out.println("Cliente " + getId() + " esperando su pizza.");
     }
 
-    private void esperar() {
-        System.out.println(getName() + " espera su pizza.");
-        try {
-            synchronized (monitorMesero) {
-                monitorMesero.notificarClientes(); // Avisar al mesero que la pizza está lista.
-                monitorMesero.wait(); // Esperar hasta que el mesero confirme que la pizza está lista.
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void entregarPizza() {
+        monitorRecepcionista.entregarPizza(this);
     }
 
-    private void comer() {
-        System.out.println(getName() + " come la pizza.");
-        try {
-            Thread.sleep(random.nextInt(5000)); // Simula el tiempo que tarda en comer.
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void comerPizza(){
+        System.out.println("Cliente " + getId() + " esta comiendo su Pizza");
     }
+
 
     @Override
     public void run() {
-        while (true){
-            try {
-                llegarAlRestaurante();
-                entrarAlRestaurante();
-                pedirPizza();
-                esperar();
-                comer();
-                monitorRecepcionista.salirRestaurante();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        monitorRecepcionista.llegarCliente(this);
+        entrarRestaurante();
+        pedirPizza();
+        monitorMesero.atenderPedido(this);
+        esperarPizza();
+        entregarPizza();
+        comerPizza();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        monitorRecepcionista.abandonarRestaurante(this);
+       /* try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
 
     }
 }

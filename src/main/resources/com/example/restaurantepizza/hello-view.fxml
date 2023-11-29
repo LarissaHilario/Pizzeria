@@ -1,24 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.171" fx:controller="com.example.restaurantepizza.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-   <AnchorPane prefHeight="200.0" prefWidth="200.0">
-      <children>
-         <ImageView fx:id="image" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-               <Image url="@../../../images/BackgroundPizzeria.png" />
-            </image>
-         </ImageView>
-      </children>
-   </AnchorPane>
-    <Button onAction="#onHelloButtonClick" text="Hello!" />
-</VBox>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="546.0" prefWidth="930.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.restaurantepizza.HelloController">
+   <children>
+      <ImageView fitHeight="546.0" fitWidth="955.0" layoutX="103.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/bg.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="83.0" fitWidth="75.0" layoutX="330.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/mesero.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="75.0" fitWidth="75.0" layoutX="307.0" layoutY="89.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/mesero.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="83.0" fitWidth="83.0" layoutX="326.0" layoutY="116.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/mesero.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="85.0" fitWidth="75.0" layoutX="317.0" layoutY="292.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/mesero.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="90.0" fitWidth="75.0" layoutX="317.0" layoutY="367.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/mesero.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="83.0" fitWidth="85.0" layoutX="313.0" layoutY="442.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/mesero.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="nino" fitHeight="75.0" fitWidth="58.0" layoutX="20.0" layoutY="229.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/niño.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="button" layoutX="19.0" layoutY="330.0" mnemonicParsing="false" onMouseClicked="#onCLick" prefHeight="57.0" prefWidth="75.0" text="Iniciar" />
+   </children>
+</AnchorPane>

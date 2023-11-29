@@ -2,69 +2,89 @@ package com.example.restaurantepizza.Models;
 
 import com.example.restaurantepizza.Threads.HiloCliente;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-
-import java.util.Queue;
+import java.util.*;
 
 public class MonitorRecepcionista {
     private boolean restauranteLleno;
+    private int mesasOcupadas;
+    private final int capacidadMesas;
     private Queue<HiloCliente> colaClientes;
-    private boolean[] mesasDisponibles;
+    private Map<HiloCliente, Integer> asignacionMesas;
+    private MonitorMesero monitorMesero;
 
-    public MonitorRecepcionista(int numMesas) {
+    public MonitorRecepcionista(int capacidadMesas) {
         this.restauranteLleno = false;
+        this.mesasOcupadas = 0;
+        this.capacidadMesas = capacidadMesas;
         this.colaClientes = new LinkedList<>();
-        this.mesasDisponibles = new boolean[numMesas];
-        Arrays.fill(mesasDisponibles, true); // Todas las mesas inicialmente disponibles.
+        this.asignacionMesas = new HashMap<>();
     }
 
-    public synchronized void entrarRestaurante(HiloCliente cliente) throws InterruptedException {
-        if (restauranteLleno) {
-            colaClientes.offer(cliente);
-            wait(); // Espera hasta que haya espacio en el restaurante.
-        } else {
-            asignarMesa(cliente);
-        }
-    }
-    public synchronized HiloCliente atenderCliente() throws InterruptedException {
-        if (restauranteLleno) {
-            wait(); // Espera hasta que haya espacio en el restaurante.
-        }
-
-        HiloCliente cliente = colaClientes.poll();
-        if (cliente != null) {
-            restauranteLleno = true;
-            notify(); // Notifica a los clientes en espera que el restaurante está lleno.
-        }
-
-        return cliente;
+    public void setMonitorMesero(MonitorMesero monitorMesero) {
+        this.monitorMesero = monitorMesero;
     }
 
+    public synchronized void llegarCliente(HiloCliente cliente) {
+        System.out.println("Cliente " + cliente.getId() + " llegó al restaurante.");
 
-    private void asignarMesa(HiloCliente cliente) {
-        for (int i = 0; i < mesasDisponibles.length; i++) {
-            if (mesasDisponibles[i]) {
-                mesasDisponibles[i] = false; // Marca la mesa como ocupada.
-                System.out.println("Recepcionista asigna mesa " + (i + 1) + " a " + cliente.getName());
-                return;
+        if (mesasOcupadas == capacidadMesas) {
+            System.out.println("Restaurante lleno. Cliente " + cliente.getId() + " en cola de espera.");
+            colaClientes.add(cliente);
+            while (restauranteLleno || colaClientes.peek() != cliente) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            System.out.println("Cliente " + cliente.getId() + " sale de la cola de espera");
+            colaClientes.remove();
         }
-        System.out.println("No hay mesas disponibles para " + cliente.getName());
-        // Aquí podrías manejar el caso en que no hay mesas disponibles.
+
+        int mesaAsignada;
+        Set<Integer> mesasDisponibles = new HashSet<>();
+        for (int i = 1; i <= capacidadMesas; i++) {
+            mesasDisponibles.add(i);
+        }
+        for (Integer mesaOcupada : asignacionMesas.values()) {
+            mesasDisponibles.remove(mesaOcupada);
+        }
+
+        if (!mesasDisponibles.isEmpty()) {
+            mesaAsignada = mesasDisponibles.iterator().next();
+        } else {
+            mesasOcupadas++;
+            mesaAsignada = mesasOcupadas;
+        }
+
+        asignacionMesas.put(cliente, mesaAsignada);
+
+        if (mesasOcupadas == capacidadMesas) {
+            restauranteLleno = true;
+        }
+
+        System.out.println("Recepcionista asignó al Cliente " + cliente.getId() + " a la mesa " + mesaAsignada);
+        notifyAll();
+
     }
 
-    public synchronized void salirRestaurante() {
-        System.out.println("Un cliente acaba de salir");
-        if (colaClientes.isEmpty()) {
+    public synchronized void abandonarRestaurante(HiloCliente cliente) {
+        mesasOcupadas--;
+
+        if (mesasOcupadas < capacidadMesas) {
             restauranteLleno = false;
-            notify(); // Notifica a los clientes en espera que hay espacio.
+            notifyAll();
         }
-    }
-    public boolean[] getMesasDisponibles() {
-        return mesasDisponibles;
+
+        asignacionMesas.remove(cliente);
+        System.out.println("Cliente " + cliente.getId() + " abandonó el restaurante.");
     }
 
+    public synchronized void entregarPizza(HiloCliente cliente) {
+        System.out.println("Pizza entregada al Cliente " + cliente.getId());
+        notify();
+
+    }
 }
 
 

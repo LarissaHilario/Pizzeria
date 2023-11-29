@@ -1,7 +1,7 @@
 package com.example.restaurantepizza.Threads;
 
 import com.example.restaurantepizza.Models.MonitorRecepcionista;
-
+/*
 public class HiloRecepcionista extends Thread {
     private final MonitorRecepcionista monitorRecepcionista;
 
@@ -35,5 +35,5 @@ public class HiloRecepcionista extends Thread {
         atenderClientes();
     }
 }
-
+*/
 

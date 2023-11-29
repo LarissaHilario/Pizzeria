@@ -1,45 +1,54 @@
 package com.example.restaurantepizza.Models;
 
+import com.example.restaurantepizza.Threads.HiloCliente;
+import com.example.restaurantepizza.Threads.HiloMesero;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class MonitorMesero {
-    private int pizzasDisponibles;
-    private int numeroOrden = 1;
+    private int meserosDisponibles;
+    private Queue<HiloCliente> colaPedidos;
 
-    private Queue<String> ordenes;
-
-    public MonitorMesero(int capacidadRestaurante) {
-        this.pizzasDisponibles = capacidadRestaurante * 5; // Inicializamos con pizzas suficientes.
-        this.ordenes = new LinkedList<>();
+    public MonitorMesero(int cantidadMeseros) {
+        this.meserosDisponibles = cantidadMeseros;
+        this.colaPedidos = new LinkedList<>();
     }
 
-    public synchronized int tomarOrden() {
-        return numeroOrden++;
-    }
-    public synchronized void entregarPizza() throws InterruptedException {
-        while (ordenes.isEmpty()) {
-            wait(); // Espera hasta que haya órdenes pendientes.
+    public synchronized void atenderPedido(HiloCliente cliente) {
+
+        if (meserosDisponibles == 0) {
+            System.out.println("No hay meseros disponibles. Cliente " + cliente.getId() + " en cola de pedidos.");
+            colaPedidos.add(cliente);
+            while (meserosDisponibles == 0 || colaPedidos.peek() != cliente) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Cliente " + cliente.getId() + " sale de la cola de pedidos.");
+            colaPedidos.remove();
         }
 
-        Thread.sleep(1000); // Simula el tiempo que toma entregar la pizza.
-        ordenes.poll();
-        pizzasDisponibles--;
-        System.out.println("Mesero entrega pizza");
-        notify(); // Notifica al cliente específico que la pizza está lista.
-    }
+        meserosDisponibles--;
+        System.out.println("Pedido del Cliente " + cliente.getId() + " atendido por un mesero.");
 
-    public synchronized boolean hayOrdenesPendientes() {
-        return !ordenes.isEmpty();
-    }
+        meserosDisponibles++;
 
-    public synchronized void notificarClientes() {
         notifyAll();
     }
 
-    public synchronized int getPizzasDisponibles() {
-        return pizzasDisponibles;
+    public synchronized void liberarMesero(HiloMesero hiloMesero) {
+        if (meserosDisponibles < 7) {
+            meserosDisponibles++;
+        }
+
+        if (colaPedidos.size() > 0) {
+            notify();
+        }
     }
+
 }
 
 
