@@ -18,16 +18,28 @@ public class MonitorMesero {
         return numeroOrden++;
     }
     public synchronized void entregarPizza() throws InterruptedException {
-        if (!ordenes.isEmpty()) {
-            Thread.sleep(1000); // Simula el tiempo que toma entregar la pizza.
-            ordenes.poll();
-            pizzasDisponibles--;
-            System.out.println("Mesero entrega pizza");
+        while (ordenes.isEmpty()) {
+            wait(); // Espera hasta que haya órdenes pendientes.
         }
+
+        Thread.sleep(1000); // Simula el tiempo que toma entregar la pizza.
+        ordenes.poll();
+        pizzasDisponibles--;
+        System.out.println("Mesero entrega pizza");
+        notify(); // Notifica al cliente específico que la pizza está lista.
+    }
+
+    public synchronized boolean hayOrdenesPendientes() {
+        return !ordenes.isEmpty();
+    }
+
+    public synchronized void notificarClientes() {
+        notifyAll();
     }
 
     public synchronized int getPizzasDisponibles() {
         return pizzasDisponibles;
     }
 }
+
 

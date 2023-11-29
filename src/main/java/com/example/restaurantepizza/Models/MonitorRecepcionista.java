@@ -55,12 +55,16 @@ public class MonitorRecepcionista {
     }
 
     public synchronized void salirRestaurante() {
+        System.out.println("Un cliente acaba de salir");
         if (colaClientes.isEmpty()) {
             restauranteLleno = false;
             notify(); // Notifica a los clientes en espera que hay espacio.
         }
     }
-}
+    public boolean[] getMesasDisponibles() {
+        return mesasDisponibles;
+    }
 
+}
 
 

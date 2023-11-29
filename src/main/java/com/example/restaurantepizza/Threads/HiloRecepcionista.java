@@ -12,14 +12,17 @@ public class HiloRecepcionista extends Thread {
     private void atenderClientes() {
         while (true) {
             try {
-                HiloCliente cliente = monitorRecepcionista.atenderCliente();
-                System.out.println("Recepcionista atiende a " + cliente.getName());
-                // La asignación de mesas se realiza en el método asignarMesa dentro de entrarRestaurante.
+                synchronized (monitorRecepcionista) {
+                    HiloCliente cliente = monitorRecepcionista.atenderCliente();
+                    asignarMesa(cliente); // Asignar una mesa al cliente.
+                    System.out.println("Recepcionista atiende a " + cliente.getName());
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     private void asignarMesa(HiloCliente cliente) {
         // Lógica para asignar una mesa al cliente.

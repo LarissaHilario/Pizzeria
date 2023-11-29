@@ -28,14 +28,17 @@ public class HiloCliente extends Thread {
         System.out.println(getName() + " pide una pizza: Orden #" + numeroOrden);
         // Simula el tiempo que tarda en comer.
         Thread.sleep(5000);
-        System.out.println(getName() + " come la pizza: Orden #" + numeroOrden);
-        monitorRecepcionista.salirRestaurante();
+        //System.out.println(getName() + " come la pizza: Orden #" + numeroOrden);
+        //monitorRecepcionista.salirRestaurante();
     }
 
     private void esperar() {
         System.out.println(getName() + " espera su pizza.");
         try {
-            Thread.sleep(3000); // Simula el tiempo que tarda en hacer la pizza.
+            synchronized (monitorMesero) {
+                monitorMesero.notificarClientes(); // Avisar al mesero que la pizza está lista.
+                monitorMesero.wait(); // Esperar hasta que el mesero confirme que la pizza está lista.
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -52,15 +55,18 @@ public class HiloCliente extends Thread {
 
     @Override
     public void run() {
-        try {
-            llegarAlRestaurante();
-            entrarAlRestaurante();
-            pedirPizza();
-            esperar();
-            comer();
-            monitorRecepcionista.salirRestaurante();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (true){
+            try {
+                llegarAlRestaurante();
+                entrarAlRestaurante();
+                pedirPizza();
+                esperar();
+                comer();
+                monitorRecepcionista.salirRestaurante();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 }
