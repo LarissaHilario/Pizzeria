@@ -33,9 +33,7 @@ public class MonitorMesero {
 
         meserosDisponibles--;
         System.out.println("Pedido del Cliente " + cliente.getId() + " atendido por un mesero.");
-
         meserosDisponibles++;
-
         notifyAll();
     }
 

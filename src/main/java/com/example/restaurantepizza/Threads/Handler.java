@@ -16,6 +16,7 @@ public class Handler extends Observable implements Runnable {
         this.monitorRecepcionista = new MonitorRecepcionista(20);
     }
 
+
     @Override
     public void run() {
 
@@ -24,11 +25,13 @@ public class Handler extends Observable implements Runnable {
 
             HiloCliente cliente = new HiloCliente(monitorRecepcionista, monitorMesero);
             cliente.start();
+
             try {
 
                 Thread.sleep(1000);
 
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }

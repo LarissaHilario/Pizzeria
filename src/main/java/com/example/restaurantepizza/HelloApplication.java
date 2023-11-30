@@ -1,15 +1,9 @@
 package com.example.restaurantepizza;
-
-import com.example.restaurantepizza.Models.MonitorMesero;
-import com.example.restaurantepizza.Models.MonitorRecepcionista;
-import com.example.restaurantepizza.Threads.HiloCliente;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 
 public class HelloApplication extends Application {
 
@@ -21,7 +15,6 @@ public class HelloApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
         public static void main(String[] args) {
         launch(args);
 

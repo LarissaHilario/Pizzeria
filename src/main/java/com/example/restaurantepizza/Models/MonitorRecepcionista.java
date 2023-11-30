@@ -64,6 +64,7 @@ public class MonitorRecepcionista {
         }
 
         System.out.println("Recepcionista asignó al Cliente " + cliente.getId() + " a la mesa " + mesaAsignada);
+
         notifyAll();
 
     }

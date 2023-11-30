@@ -1,6 +1,7 @@
 package com.example.restaurantepizza;
 
 
+import com.example.restaurantepizza.Models.Cliente;
 import com.example.restaurantepizza.Models.MonitorMesero;
 import com.example.restaurantepizza.Models.MonitorRecepcionista;
 import com.example.restaurantepizza.Threads.Handler;
@@ -13,57 +14,58 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 
 import java.util.Observable;
 import java.util.Observer;
-
 public class HelloController implements Observer {
-
     private MonitorMesero monitorMesero;
     private MonitorRecepcionista monitorRecepcionista;
     private Handler handler;
 
     @FXML
-    private ImageView nino;
+    private Cliente nino;
 
     @FXML
     private Button button;
 
+    @FXML
+    public void initialize() {
+        // Instantiate Handler with the required parameters
+        handler = new Handler(monitorRecepcionista, monitorMesero);
 
-  public void moverClienteAMesa() {
-        // Obtén las coordenadas de la nueva posición de la mesa
-        double nuevaX =600;
-        double nuevaY = 200;
+        nino = new Cliente(monitorRecepcionista, monitorMesero, new Image(getClass().getResource("../../../images/nino.png").toExternalForm()));
+        // Set initial position
+        nino.setTranslateX(0);
+        nino.setTranslateY(0);
 
-        // Crea una transición de traducción
-        TranslateTransition transition = new TranslateTransition(Duration.seconds(2), nino);
+        // Add nino to the AnchorPane
+        AnchorPane anchorPane = (AnchorPane) button.getParent();
+        anchorPane.getChildren().add(nino);
 
-        // Establece las nuevas coordenadas
-        transition.setToX(nuevaX);
-        transition.setToY(nuevaY);
+        // Add nino as an observer to the handler
+        handler.addObserver(this);
 
-        // Reproduce la transición
-        transition.play();
-
+        // Set up event handler for nino
+        nino.setOnMouseClicked(event -> onClicked(event));
     }
+
 
     @FXML
     void onClicked(MouseEvent event) {
-        double nuevaX =600;
-        double nuevaY = 200;
-        this.handler = new Handler(monitorRecepcionista, monitorMesero);
-        handler.addObserver(this);
-        Thread h1= new Thread(handler);
+        // Start the handler thread
+        Thread h1 = new Thread(handler);
         h1.start();
 
-
-
+        // Perform nino's action
+        nino.entrarRestaurante();
     }
 
     @Override
     public void update(Observable o, Object arg) {
 
-
     }
+
+    // Rest of the code...
 }
